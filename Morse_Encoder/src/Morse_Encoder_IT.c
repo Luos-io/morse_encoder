@@ -1,11 +1,11 @@
 /******************************************************************************
- * @file stm32f0xx_it
+ * @file Morse_Encoder_IT
  * @brief Interrupt Service Routines.
  * @author Yourself
  * @version 0.0.0
  ******************************************************************************/
 #include "stm32f0xx_hal.h"
-#include "stm32f0xx_it.h"
+#include "Morse_Encoder_IT.h"
 
 /*******************************************************************************
  * Definitions
@@ -24,25 +24,21 @@
 /******************************************************************************/
 void NMI_Handler(void)
 {
-
 }
 
 void HardFault_Handler(void)
 {
   while (1)
   {
-
   }
 }
 
 void SVC_Handler(void)
 {
-
 }
 
 void PendSV_Handler(void)
 {
-
 }
 
 void SysTick_Handler(void)
@@ -60,5 +56,4 @@ void EXTI4_15_IRQHandler(void)
 {
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_8);
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
-
 }

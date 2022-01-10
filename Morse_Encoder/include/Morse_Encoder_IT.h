@@ -1,11 +1,11 @@
 /******************************************************************************
- * @file stm32f0xx_it
+ * @file Morse_Encoder_IT
  * @brief Interrupt Service Routines.
  * @author Yourself
  * @version 0.0.0
  ******************************************************************************/
-#ifndef __STM32F0xx_IT_H
-#define __STM32F0xx_IT_H
+#ifndef __MORSE_ENCODER_IT_H
+#define __MORSE_ENCODER_IT_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -33,4 +33,4 @@ void EXTI4_15_IRQHandler(void);
 }
 #endif
 
-#endif /* __STM32F0xx_IT_H */
+#endif /* __MORSE_ENCODER_IT_H */

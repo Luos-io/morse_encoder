@@ -28,36 +28,15 @@ void SystemClock_Config(void);
  ******************************************************************************/
 int main(void)
 {
-    GPIO_InitTypeDef GPIO_InitStruct = {0};
-    static volatile uint32_t i = 0;
-
     HAL_Init();
     SystemClock_Config();
-
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-
-    GPIO_InitStruct.Pin = GPIO_PIN_5;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
     // Init
     Luos_Init();
     while (1)
     {
         // Loop
-
         Luos_Loop();
-        if (i > 10000)
-        {
-            HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-            i = 0;
-        }
-        else
-        {
-            i++;
-        }
     }
 }
 /******************************************************************************
