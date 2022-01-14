@@ -20,6 +20,7 @@ uint32_t serial_start_timeout = 0;
 /*******************************************************************************
  * Function
  ******************************************************************************/
+void Serial_MsgHandler(service_t *service, msg_t *msg);
 
 /******************************************************************************
  * @brief package init must be call in project init
@@ -31,7 +32,7 @@ void Serial_Init(void)
     revision_t revision = {.major = 1, .minor = 0, .build = 0};
 
     // Create Led service
-    service = Luos_CreateService(0, LUOS_LAST_TYPE, "serial_service", revision);
+    service = Luos_CreateService(Serial_MsgHandler, LUOS_LAST_TYPE, "serial_service", revision);
 }
 /******************************************************************************
  * @brief package loop must be call in project loop
@@ -56,4 +57,8 @@ void Serial_Loop(void)
 
         serial_start_timeout = Luos_GetSystick();
     }
+}
+
+void Serial_MsgHandler(service_t *service, msg_t *msg)
+{
 }

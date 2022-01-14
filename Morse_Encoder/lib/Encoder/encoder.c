@@ -39,10 +39,10 @@ bool serial_detected = false;
 /*******************************************************************************
  * Function
  ******************************************************************************/
-void send_morse_data_to_led(bool state);
-void encoder_MsgHandler(service_t *service, msg_t *msg);
-void play_word(MorseWord *morse_word);
-void play_letter(MorseLetter *letter);
+void Encoder_SendMorse(bool state);
+void Encoder_MsgHandler(service_t *service, msg_t *msg);
+void Encoder_PlayWord(MorseWord *morse_word);
+void Encoder_PlayLetter(MorseLetter *letter);
 
 /******************************************************************************
  * @brief init must be call in project init
@@ -54,14 +54,9 @@ void Encoder_Init(void)
     // service initialization
     revision_t revision = {.major = 1, .minor = 0, .build = 0};
     // Service creation following state profile
-    service = Luos_CreateService(encoder_MsgHandler, LUOS_LAST_TYPE, "encoder_service", revision);
+    service = Luos_CreateService(Encoder_MsgHandler, LUOS_LAST_TYPE, "encoder_service", revision);
     // Detect all services of your network and create a routing_table
     RoutingTB_DetectServices(service);
-
-    if (RoutingTB_IDFromAlias("serial_service"))
-    {
-        serial_detected = true;
-    }
 
     // initialize variables
     morse_state         = false;
@@ -80,13 +75,25 @@ void Encoder_Init(void)
  ******************************************************************************/
 void Encoder_Loop(void)
 {
-    if (serial_detected)
+    if (Luos_IsNodeDetected())
     {
-        play_letter(letter_to_play);
-    }
-    else
-    {
-        play_word(&sos_table);
+        if (RoutingTB_IDFromAlias("serial_service"))
+        {
+            serial_detected = true;
+        }
+        else
+        {
+            serial_detected = false;
+        }
+
+        if (serial_detected)
+        {
+            Encoder_PlayLetter(letter_to_play);
+        }
+        else
+        {
+            Encoder_PlayWord(&sos_table);
+        }
     }
 }
 
@@ -95,7 +102,7 @@ void Encoder_Loop(void)
  * @param State to send to the led
  * @return None
  ******************************************************************************/
-void send_morse_data_to_led(bool state)
+void Encoder_SendMorse(bool state)
 {
     // Get the ID of our LED from the routing table
     int8_t id_led = RoutingTB_IDFromAlias("led_service");
@@ -116,7 +123,7 @@ void send_morse_data_to_led(bool state)
  * @param msg which send the message
  * @return None
  ******************************************************************************/
-void encoder_MsgHandler(service_t *service, msg_t *msg)
+void Encoder_MsgHandler(service_t *service, msg_t *msg)
 {
     char received_letter = (char)(msg->data[0]);
     switch (received_letter)
@@ -236,12 +243,12 @@ void encoder_MsgHandler(service_t *service, msg_t *msg)
  * @param None
  * @return None
  ******************************************************************************/
-void play_word(MorseWord *morse_word)
+void Encoder_PlayWord(MorseWord *morse_word)
 {
     // send a word sequence
     if ((letter_index < nb_letter_in_word) & !end_of_word)
     {
-        play_letter(morse_word->morse_letter[letter_index]);
+        Encoder_PlayLetter(morse_word->morse_letter[letter_index]);
 
         if (end_of_letter)
         {
@@ -272,7 +279,7 @@ void play_word(MorseWord *morse_word)
  * @param None
  * @return None
  ******************************************************************************/
-void play_letter(MorseLetter *letter)
+void Encoder_PlayLetter(MorseLetter *letter)
 {
     // for each element in a letter
     if ((letter->morse_element[element_index].value != LETTER_END) & !end_of_letter)
@@ -282,7 +289,7 @@ void play_letter(MorseLetter *letter)
             morse_state  = letter->morse_element[element_index].state;
             morse_period = letter->morse_element[element_index].word_length;
             // send new led state
-            send_morse_data_to_led(morse_state);
+            Encoder_SendMorse(morse_state);
             // wait for the time period
             morse_start_timeout = Luos_GetSystick();
             // go to the next element
