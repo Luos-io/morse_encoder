@@ -13,10 +13,19 @@
  * Definitions
  ******************************************************************************/
 #define LETTER_END 0xFFFFFFF1
+#define WORD_END   0xFFFFFFF2
 
 /*******************************************************************************
  * Variables
  ******************************************************************************/
+MorseLetter end_word_letter = {
+    .value = WORD_END};
+
+MorseLetter end_letter = {
+    .morse_element[0]       = {.state = false, .word_length = WORD_SPACE - SHORT},
+    .morse_element[1].value = LETTER_END,
+};
+
 MorseLetter a_letter = {
     .morse_element[0]       = {.state = true, .word_length = SHORT},
     .morse_element[1]       = {.state = false, .word_length = SHORT},

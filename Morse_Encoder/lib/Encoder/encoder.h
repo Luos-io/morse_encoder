@@ -37,12 +37,16 @@ typedef struct MorseElement
 
 typedef struct MorseLetter
 {
-    MorseElement morse_element[10];
+    union
+    {
+        MorseElement morse_element[10];
+        uint32_t value;
+    };
 } MorseLetter;
 
 typedef struct MorseWord
 {
-    MorseLetter *morse_letter[3];
+    MorseLetter *morse_letter[10];
 } MorseWord;
 
 /*******************************************************************************

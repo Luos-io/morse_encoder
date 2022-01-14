@@ -24,6 +24,8 @@ MorseWord sos_table = {
     .morse_letter[0] = &s_letter,
     .morse_letter[1] = &o_letter,
     .morse_letter[2] = &s_letter,
+    .morse_letter[3] = &end_letter,
+    .morse_letter[4] = &end_word_letter,
 };
 
 uint8_t morse_state          = false;
@@ -31,7 +33,6 @@ WordLength morse_period      = 0;
 uint32_t morse_start_timeout = 0;
 uint16_t element_index       = 0;
 uint16_t letter_index        = 0;
-uint16_t nb_letter_in_word   = 0;
 bool end_of_word             = false;
 bool end_of_letter           = true;
 
@@ -65,7 +66,7 @@ void Encoder_Init(void)
     element_index       = 0;
     letter_index        = 0;
     end_of_letter       = true;
-    nb_letter_in_word   = sizeof(MorseWord) / sizeof(MorseLetter *);
+    end_of_word         = false;
 }
 
 /******************************************************************************
@@ -86,12 +87,13 @@ void Encoder_Loop(void)
             serial_detected = false;
         }
 
-        if (serial_detected)
+        if (!serial_detected)
         {
             Encoder_PlayLetter(letter_to_play);
         }
         else
         {
+            end_of_word = false;
             Encoder_PlayWord(&sos_table);
         }
     }
@@ -246,7 +248,7 @@ void Encoder_MsgHandler(service_t *service, msg_t *msg)
 void Encoder_PlayWord(MorseWord *morse_word)
 {
     // send a word sequence
-    if ((letter_index < nb_letter_in_word) & !end_of_word)
+    if ((morse_word->morse_letter[letter_index]->value != WORD_END) & !end_of_word)
     {
         Encoder_PlayLetter(morse_word->morse_letter[letter_index]);
 
@@ -255,22 +257,12 @@ void Encoder_PlayWord(MorseWord *morse_word)
             end_of_letter = false;
             letter_index += 1;
         }
-
-        // last letter in the word
-        if (letter_index == nb_letter_in_word)
-        {
-            letter_index        = 0;
-            end_of_word         = true;
-            morse_start_timeout = Luos_GetSystick();
-        }
     }
-    // wait between two words
-    if (end_of_word)
+    else
     {
-        if (Luos_GetSystick() - morse_start_timeout > WORD_SPACE)
-        {
-            end_of_word = false;
-        }
+        // end of word
+        letter_index = 0;
+        end_of_word  = true;
     }
 }
 
