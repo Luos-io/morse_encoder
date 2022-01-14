@@ -44,6 +44,7 @@ void Encoder_SendMorse(bool state);
 void Encoder_MsgHandler(service_t *service, msg_t *msg);
 void Encoder_PlayWord(MorseWord *morse_word);
 void Encoder_PlayLetter(MorseLetter *letter);
+MorseLetter *Encoder_DecodeLetter(char letter);
 
 /******************************************************************************
  * @brief init must be call in project init
@@ -66,7 +67,7 @@ void Encoder_Init(void)
     element_index       = 0;
     letter_index        = 0;
     end_of_letter       = true;
-    end_of_word         = false;
+    end_of_word         = true;
 }
 
 /******************************************************************************
@@ -128,115 +129,74 @@ void Encoder_SendMorse(bool state)
 void Encoder_MsgHandler(service_t *service, msg_t *msg)
 {
     char received_letter = (char)(msg->data[0]);
-    switch (received_letter)
+    letter_to_play       = Encoder_DecodeLetter(received_letter);
+    end_of_letter        = false;
+}
+
+/******************************************************************************
+ * @brief manage messages send to the service
+ * @param Service which send the message
+ * @param msg which send the message
+ * @return None
+ ******************************************************************************/
+MorseLetter *Encoder_DecodeLetter(char letter)
+{
+    switch (letter)
     {
         case 'a':
-            letter_to_play = &a_letter;
-            end_of_letter  = false;
-            break;
+            return &a_letter;
         case 'b':
-            letter_to_play = &b_letter;
-            end_of_letter  = false;
-            break;
+            return &b_letter;
         case 'c':
-            letter_to_play = &c_letter;
-            end_of_letter  = false;
-            break;
+            return &c_letter;
         case 'd':
-            letter_to_play = &d_letter;
-            end_of_letter  = false;
-            break;
+            return &d_letter;
         case 'e':
-            letter_to_play = &e_letter;
-            end_of_letter  = false;
-            break;
+            return &e_letter;
         case 'f':
-            letter_to_play = &f_letter;
-            end_of_letter  = false;
-            break;
+            return &f_letter;
         case 'g':
-            letter_to_play = &g_letter;
-            end_of_letter  = false;
-            break;
+            return &g_letter;
         case 'h':
-            letter_to_play = &h_letter;
-            end_of_letter  = false;
-            break;
+            return &h_letter;
         case 'i':
-            letter_to_play = &i_letter;
-            end_of_letter  = false;
-            break;
+            return &i_letter;
         case 'j':
-            letter_to_play = &j_letter;
-            end_of_letter  = false;
-            break;
+            return &j_letter;
         case 'k':
-            letter_to_play = &k_letter;
-            end_of_letter  = false;
-            break;
+            return &k_letter;
         case 'l':
-            letter_to_play = &l_letter;
-            end_of_letter  = false;
-            break;
+            return &l_letter;
         case 'm':
-            letter_to_play = &m_letter;
-            end_of_letter  = false;
-            break;
+            return &m_letter;
         case 'n':
-            letter_to_play = &n_letter;
-            end_of_letter  = false;
-            break;
+            return &n_letter;
         case 'o':
-            letter_to_play = &o_letter;
-            end_of_letter  = false;
-            break;
+            return &o_letter;
         case 'p':
-            letter_to_play = &p_letter;
-            end_of_letter  = false;
-            break;
+            return &p_letter;
         case 'q':
-            letter_to_play = &q_letter;
-            end_of_letter  = false;
-            break;
+            return &q_letter;
         case 'r':
-            letter_to_play = &r_letter;
-            end_of_letter  = false;
-            break;
+            return &r_letter;
         case 's':
-            letter_to_play = &s_letter;
-            end_of_letter  = false;
-            break;
+            return &s_letter;
         case 't':
-            letter_to_play = &t_letter;
-            end_of_letter  = false;
-            break;
+            return &t_letter;
         case 'u':
-            letter_to_play = &u_letter;
-            end_of_letter  = false;
-            break;
+            return &u_letter;
         case 'v':
-            letter_to_play = &v_letter;
-            end_of_letter  = false;
-            break;
+            return &v_letter;
         case 'w':
-            letter_to_play = &w_letter;
-            end_of_letter  = false;
-            break;
+            return &w_letter;
         case 'x':
-            letter_to_play = &x_letter;
-            end_of_letter  = false;
-            break;
+            return &x_letter;
         case 'y':
-            letter_to_play = &y_letter;
-            end_of_letter  = false;
-            break;
+            return &y_letter;
         case 'z':
-            letter_to_play = &z_letter;
-            end_of_letter  = false;
-            break;
+            return &z_letter;
         default:
-            end_of_letter = true;
-            break;
+            return 0;
     }
 }
 
