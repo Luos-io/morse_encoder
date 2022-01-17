@@ -17,6 +17,8 @@ service_t *service;
 
 uint32_t serial_start_timeout = 0;
 
+static luos_cmd_t morse_cmd = ERROR_CMD + 1;
+
 /*******************************************************************************
  * Function
  ******************************************************************************/
@@ -49,10 +51,13 @@ void Serial_Loop(void)
         // Now send a message
         msg_t char_msg;
         char_msg.header.target      = id_encoder;
-        char_msg.header.cmd         = IO_STATE;
+        char_msg.header.cmd         = morse_cmd;
         char_msg.header.target_mode = IDACK;
-        char_msg.header.size        = sizeof(char);
-        char_msg.data[0]            = 'c';
+        char_msg.header.size        = 4 * sizeof(char);
+        char_msg.data[0]            = (uint8_t)'l';
+        char_msg.data[1]            = (uint8_t)'e';
+        char_msg.data[2]            = (uint8_t)'c';
+        char_msg.data[3]            = (uint8_t)'\r';
         Luos_SendMsg(service, &char_msg);
 
         serial_start_timeout = Luos_GetSystick();

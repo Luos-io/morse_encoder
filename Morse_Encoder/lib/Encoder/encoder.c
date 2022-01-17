@@ -17,6 +17,8 @@
  ******************************************************************************/
 service_t *service;
 
+static luos_cmd_t morse_cmd = ERROR_CMD + 1;
+
 // morse variables
 MorseLetter *letter_to_play;
 MorseWord receive_word;
@@ -109,20 +111,23 @@ void Encoder_Loop(void)
  ******************************************************************************/
 void Encoder_MsgHandler(service_t *service, msg_t *msg)
 {
-    uint16_t index       = 0;
-    char received_letter = (char)(msg->data[index]);
-    // while (received_letter != '\r')
-    // {
-    //     letter_to_play = Encoder_DecodeLetter(received_letter);
-    //     index += 1;
-    //     received_letter = (char)(msg->data[index]);
-    // }
+    uint16_t index          = 0;
+    uint8_t received_letter = 0;
 
-    receive_word.morse_letter[0] = Encoder_DecodeLetter(received_letter);
-    receive_word.morse_letter[1] = &end_letter;
-    receive_word.morse_letter[2] = &end_word_marker;
+    if (msg->header.cmd == morse_cmd)
+    {
+        received_letter = msg->data[index];
+        while (received_letter != '\r')
+        {
+            receive_word.morse_letter[index] = Encoder_DecodeLetter(received_letter);
+            index += 1;
+            received_letter = msg->data[index];
+        }
+        receive_word.morse_letter[index]     = &end_letter;
+        receive_word.morse_letter[index + 1] = &end_word_marker;
 
-    end_of_word = false;
+        end_of_word = false;
+    }
 }
 
 /******************************************************************************
