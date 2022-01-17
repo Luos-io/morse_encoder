@@ -102,26 +102,6 @@ void Encoder_Loop(void)
 }
 
 /******************************************************************************
- * @brief send a luos message to the led
- * @param State to send to the led
- * @return None
- ******************************************************************************/
-void Encoder_SendMorse(bool state)
-{
-    // Get the ID of our LED from the routing table
-    int8_t id_led = RoutingTB_IDFromAlias("led_service");
-
-    // Now send a message
-    msg_t led_msg;
-    led_msg.header.target      = id_led;
-    led_msg.header.cmd         = IO_STATE;
-    led_msg.header.target_mode = IDACK;
-    led_msg.header.size        = sizeof(char);
-    led_msg.data[0]            = state;
-    Luos_SendMsg(service, &led_msg);
-}
-
-/******************************************************************************
  * @brief manage messages send to the service
  * @param Service which send the message
  * @param msg which send the message
@@ -137,7 +117,6 @@ void Encoder_MsgHandler(service_t *service, msg_t *msg)
     //     index += 1;
     //     received_letter = (char)(msg->data[index]);
     // }
-    // end_of_letter = false;
 
     receive_word.morse_letter[0] = Encoder_DecodeLetter(received_letter);
     receive_word.morse_letter[1] = &end_letter;
@@ -267,4 +246,24 @@ void Encoder_PlayLetter(MorseLetter *letter)
         element_index = 0;
         end_of_letter = true;
     }
+}
+
+/******************************************************************************
+ * @brief send a luos message to the led
+ * @param State to send to the led
+ * @return None
+ ******************************************************************************/
+void Encoder_SendMorse(bool state)
+{
+    // Get the ID of our LED from the routing table
+    int8_t id_led = RoutingTB_IDFromAlias("led_service");
+
+    // Now send a message
+    msg_t led_msg;
+    led_msg.header.target      = id_led;
+    led_msg.header.cmd         = IO_STATE;
+    led_msg.header.target_mode = IDACK;
+    led_msg.header.size        = sizeof(char);
+    led_msg.data[0]            = state;
+    Luos_SendMsg(service, &led_msg);
 }
