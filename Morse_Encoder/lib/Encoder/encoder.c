@@ -11,7 +11,7 @@
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-
+#define limit_character '\r'
 /*******************************************************************************
  * Variables
  ******************************************************************************/
@@ -19,13 +19,14 @@ service_t *service;
 
 // morse variables
 MorseLetter *letter_to_play;
+MorseWord receive_word;
 
 MorseWord sos_table = {
     .morse_letter[0] = &s_letter,
     .morse_letter[1] = &o_letter,
     .morse_letter[2] = &s_letter,
     .morse_letter[3] = &end_letter,
-    .morse_letter[4] = &end_word_letter,
+    .morse_letter[4] = &end_word_marker,
 };
 
 uint8_t morse_state          = false;
@@ -88,9 +89,9 @@ void Encoder_Loop(void)
             serial_detected = false;
         }
 
-        if (!serial_detected)
+        if (serial_detected)
         {
-            Encoder_PlayLetter(letter_to_play);
+            Encoder_PlayWord(&receive_word);
         }
         else
         {
@@ -128,9 +129,21 @@ void Encoder_SendMorse(bool state)
  ******************************************************************************/
 void Encoder_MsgHandler(service_t *service, msg_t *msg)
 {
-    char received_letter = (char)(msg->data[0]);
-    letter_to_play       = Encoder_DecodeLetter(received_letter);
-    end_of_letter        = false;
+    uint16_t index       = 0;
+    char received_letter = (char)(msg->data[index]);
+    // while (received_letter != '\r')
+    // {
+    //     letter_to_play = Encoder_DecodeLetter(received_letter);
+    //     index += 1;
+    //     received_letter = (char)(msg->data[index]);
+    // }
+    // end_of_letter = false;
+
+    receive_word.morse_letter[0] = Encoder_DecodeLetter(received_letter);
+    receive_word.morse_letter[1] = &end_letter;
+    receive_word.morse_letter[2] = &end_word_marker;
+
+    end_of_word = false;
 }
 
 /******************************************************************************

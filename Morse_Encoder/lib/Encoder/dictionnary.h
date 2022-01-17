@@ -18,7 +18,7 @@
 /*******************************************************************************
  * Variables
  ******************************************************************************/
-MorseLetter end_word_letter = {
+MorseLetter end_word_marker = {
     .value = WORD_END};
 
 MorseLetter end_letter = {
