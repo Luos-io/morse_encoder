@@ -8,4 +8,7 @@
 #ifndef _NODE_CONFIG_H_
 #define _NODE_CONFIG_H_
 
+#define SERIAL_TYPE LUOS_LAST_TYPE
+#define MORSE_CMD   ERROR_CMD + 1;
+
 #endif /* _NODE_CONFIG_H_ */

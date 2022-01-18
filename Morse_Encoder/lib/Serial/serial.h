@@ -1,6 +1,6 @@
 /******************************************************************************
- * @file Led
- * @brief driver example a simple Led
+ * @file Serial
+ * @brief driver example of serial communication
  * @author Luos
  * @version 0.0.0
  ******************************************************************************/
