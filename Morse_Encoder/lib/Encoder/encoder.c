@@ -1,6 +1,6 @@
 /******************************************************************************
- * @file button
- * @brief driver example a simple button
+ * @file encoder
+ * @brief encoder app
  * @author Luos
  * @version 0.0.0
  ******************************************************************************/
@@ -20,7 +20,6 @@ service_t *service;
 static luos_cmd_t morse_cmd = ERROR_CMD + 1;
 
 // morse variables
-MorseLetter *letter_to_play;
 MorseWord receive_word;
 
 MorseWord sos_table = {
@@ -131,10 +130,9 @@ void Encoder_MsgHandler(service_t *service, msg_t *msg)
 }
 
 /******************************************************************************
- * @brief manage messages send to the service
- * @param Service which send the message
- * @param msg which send the message
- * @return None
+ * @brief decode received letters
+ * @param letter to decode
+ * @return MorseLetter pointer
  ******************************************************************************/
 MorseLetter *Encoder_DecodeLetter(char letter)
 {
@@ -198,7 +196,7 @@ MorseLetter *Encoder_DecodeLetter(char letter)
 }
 
 /******************************************************************************
- * @brief Play S.O.S sequence
+ * @brief Play a word
  * @param None
  * @return None
  ******************************************************************************/

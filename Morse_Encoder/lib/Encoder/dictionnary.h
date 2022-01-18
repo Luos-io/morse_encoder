@@ -1,6 +1,6 @@
 /******************************************************************************
- * @file button
- * @brief driver example a simple button
+ * @file dictionnary
+ * @brief morse dictionnary
  * @author Luos
  * @version 0.0.0
  ******************************************************************************/
