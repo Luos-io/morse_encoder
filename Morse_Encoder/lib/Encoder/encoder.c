@@ -60,7 +60,7 @@ void Encoder_Init(void)
     // Service creation following state profile
     service = Luos_CreateService(Encoder_MsgHandler, LUOS_LAST_TYPE, "encoder_service", revision);
     // Detect all services of your network and create a routing_table
-    RoutingTB_DetectServices(service);
+    Luos_Detect(service);
 
     // initialize variables
     morse_state         = false;

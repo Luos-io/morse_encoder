@@ -8,7 +8,7 @@
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-
+#define SERIAL_BUFFER_SIZE 10
 /*******************************************************************************
  * Variables
  ******************************************************************************/
@@ -45,7 +45,7 @@ void SerialCom_Init(void)
     SERIAL_COM_CLOCK_ENABLE();
 
     LL_USART_InitTypeDef USART_InitStruct;
-    // Initialise USART3
+    // Initialise USART
     LL_USART_Disable(SERIAL_COM);
     USART_InitStruct.BaudRate            = 1000000;
     USART_InitStruct.DataWidth           = LL_USART_DATAWIDTH_8B;
@@ -66,7 +66,7 @@ void SerialCom_Init(void)
 }
 
 /******************************************************************************
- * @brief init must be call in project init
+ * @brief serial interrupt handler
  * @param None
  * @return None
  ******************************************************************************/

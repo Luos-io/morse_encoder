@@ -12,7 +12,7 @@
 /*******************************************************************************
  * Variables
  ******************************************************************************/
-service_t *service;
+service_t *serial_service;
 /*******************************************************************************
  * Function
  ******************************************************************************/
@@ -28,7 +28,7 @@ void Serial_Init(void)
     // Initialize Serial Com Driver
     SerialCom_Init();
     // Create Serial service
-    service = Luos_CreateService(Serial_MsgHandler, SERIAL_TYPE, "serial_service", revision);
+    serial_service = Luos_CreateService(Serial_MsgHandler, SERIAL_TYPE, "serial_service", revision);
 }
 /******************************************************************************
  * @brief package loop must be call in project loop
@@ -48,7 +48,7 @@ void Serial_Loop(void)
     if (word_size > 0)
     {
         // Get the ID of our encoder from the routing table
-        int8_t id_encoder = RoutingTB_IDFromAlias("encoder_service");
+        uint16_t id_encoder = RoutingTB_IDFromAlias("encoder_service");
         // Now create a message
         msg_t char_msg;
         char_msg.header.target      = id_encoder; // id of the encoder
@@ -58,7 +58,7 @@ void Serial_Loop(void)
         // copy the word to the msg data
         memcpy(char_msg.data, &word_buffer[0], word_size * sizeof(uint8_t));
         // Send message to encoder
-        Luos_SendMsg(service, &char_msg);
+        Luos_SendMsg(serial_service, &char_msg);
     }
 }
 /******************************************************************************

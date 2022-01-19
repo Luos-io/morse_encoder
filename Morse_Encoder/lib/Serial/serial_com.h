@@ -10,10 +10,6 @@
 #include "stm32f0xx_hal.h"
 #include "stm32f0xx_ll_usart.h"
 #include "stm32f0xx_ll_gpio.h"
-#include "stm32f0xx_ll_exti.h"
-#include "stm32f0xx_ll_dma.h"
-#include "stm32f0xx_ll_system.h"
-#include "stm32f0xx_hal.h"
 
 /*******************************************************************************
  * Definitions
@@ -27,14 +23,12 @@
 #define SERIAL_COM                USART2
 #define SERIAL_COM_IRQ            USART2_IRQn
 #define SERIAL_COM_IRQHANDLER()   USART2_IRQHandler()
-
-#define SERIAL_BUFFER_SIZE 10
 /*******************************************************************************
  * Variables
  ******************************************************************************/
 
 /*******************************************************************************
- * Function
+ * Functions
  ******************************************************************************/
 void SerialCom_Init(void);
 uint8_t SerialCom_GetBufferSize(void);
