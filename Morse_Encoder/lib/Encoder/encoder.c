@@ -12,12 +12,16 @@
  * Definitions
  ******************************************************************************/
 #define limit_character '\r'
+
+typedef enum
+{
+    ENCODER_TYPE = LUOS_LAST_TYPE,
+    SERIAL_TYPE,
+} custom_type_t;
 /*******************************************************************************
  * Variables
  ******************************************************************************/
 service_t *service;
-
-static luos_cmd_t morse_cmd = ERROR_CMD + 1;
 
 // morse variables
 MorseWord receive_word;
@@ -58,7 +62,7 @@ void Encoder_Init(void)
     // service initialization
     revision_t revision = {.major = 1, .minor = 0, .build = 0};
     // Service creation following state profile
-    service = Luos_CreateService(Encoder_MsgHandler, LUOS_LAST_TYPE, "encoder_service", revision);
+    service = Luos_CreateService(Encoder_MsgHandler, ENCODER_TYPE, "encoder_service", revision);
     // Detect all services of your network and create a routing_table
     Luos_Detect(service);
 
@@ -81,15 +85,6 @@ void Encoder_Loop(void)
 {
     if (Luos_IsNodeDetected())
     {
-        if (RoutingTB_IDFromAlias("serial_service"))
-        {
-            serial_detected = true;
-        }
-        else
-        {
-            serial_detected = false;
-        }
-
         if (serial_detected)
         {
             Encoder_PlayWord(&receive_word);
@@ -113,7 +108,7 @@ void Encoder_MsgHandler(service_t *service, msg_t *msg)
     uint16_t index          = 0;
     uint8_t received_letter = 0;
 
-    if (msg->header.cmd == morse_cmd)
+    if (msg->header.cmd == SET_CMD)
     {
         received_letter = msg->data[index];
         while (received_letter != '\r')
@@ -126,6 +121,23 @@ void Encoder_MsgHandler(service_t *service, msg_t *msg)
         receive_word.morse_letter[index + 1] = &end_word_marker;
 
         end_of_word = false;
+    }
+    if (msg->header.cmd == END_DETECTION)
+    {
+        uint16_t serial_id      = RoutingTB_IDFromType(SERIAL_TYPE);
+        time_luos_t update_time = 0.01;
+        if (serial_id > 0)
+        {
+            serial_detected = true;
+            msg_t update_msg;
+            update_msg.header.target      = serial_id;
+            update_msg.header.target_mode = IDACK;
+            TimeOD_TimeToMsg(&update_time, &update_msg);
+            update_msg.header.cmd = UPDATE_PUB;
+            Luos_SendMsg(service, &update_msg);
+            return;
+        }
+        serial_detected = false;
     }
 }
 

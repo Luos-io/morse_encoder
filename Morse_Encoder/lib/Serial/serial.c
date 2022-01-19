@@ -9,10 +9,14 @@
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
+typedef enum
+{
+    ENCODER_TYPE = LUOS_LAST_TYPE,
+    SERIAL_TYPE,
+} custom_type_t;
 /*******************************************************************************
  * Variables
  ******************************************************************************/
-service_t *serial_service;
 /*******************************************************************************
  * Function
  ******************************************************************************/
@@ -28,7 +32,7 @@ void Serial_Init(void)
     // Initialize Serial Com Driver
     SerialCom_Init();
     // Create Serial service
-    serial_service = Luos_CreateService(Serial_MsgHandler, SERIAL_TYPE, "serial_service", revision);
+    Luos_CreateService(Serial_MsgHandler, SERIAL_TYPE, "serial_service", revision);
 }
 /******************************************************************************
  * @brief package loop must be call in project loop
@@ -37,29 +41,6 @@ void Serial_Init(void)
  ******************************************************************************/
 void Serial_Loop(void)
 {
-    uint8_t *word_buffer;
-    uint8_t word_size;
-
-    // get word size
-    word_size = SerialCom_GetBufferSize();
-    // get word table
-    word_buffer = SerialCom_GetBufferData();
-    // check if we have received a completed word
-    if (word_size > 0)
-    {
-        // Get the ID of our encoder from the routing table
-        uint16_t id_encoder = RoutingTB_IDFromAlias("encoder_service");
-        // Now create a message
-        msg_t char_msg;
-        char_msg.header.target      = id_encoder; // id of the encoder
-        char_msg.header.cmd         = MORSE_CMD;  // specific custom command
-        char_msg.header.target_mode = IDACK;
-        char_msg.header.size        = sizeof(char) * word_size;
-        // copy the word to the msg data
-        memcpy(char_msg.data, &word_buffer[0], word_size * sizeof(uint8_t));
-        // Send message to encoder
-        Luos_SendMsg(serial_service, &char_msg);
-    }
 }
 /******************************************************************************
  * @brief Msg manager callback when a msg receive for the serial service
@@ -69,4 +50,29 @@ void Serial_Loop(void)
  ******************************************************************************/
 static void Serial_MsgHandler(service_t *service, msg_t *msg)
 {
+
+    if (msg->header.cmd == GET_CMD)
+    {
+        uint8_t *word_buffer;
+        uint8_t word_size;
+
+        // get word size
+        word_size = SerialCom_GetBufferSize();
+        // check if we have received a completed word
+        if (word_size > 0)
+        {
+            // get word table
+            word_buffer = SerialCom_GetBufferData();
+            // Now create a message
+            msg_t char_msg;
+            char_msg.header.target      = msg->header.source; // id of the service that demands updates
+            char_msg.header.cmd         = SET_CMD;            // specific command
+            char_msg.header.target_mode = IDACK;
+            char_msg.header.size        = sizeof(char) * word_size;
+            // copy the word to the msg data
+            memcpy(char_msg.data, &word_buffer[0], word_size * sizeof(uint8_t));
+            // Send message to encoder
+            Luos_SendMsg(service, &char_msg);
+        }
+    }
 }
