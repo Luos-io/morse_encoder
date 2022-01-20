@@ -120,7 +120,8 @@ void Encoder_MsgHandler(service_t *service, msg_t *msg)
         receive_word.morse_letter[index]     = &end_letter;
         receive_word.morse_letter[index + 1] = &end_word_marker;
 
-        end_of_word = false;
+        end_of_word   = false;
+        end_of_letter = false;
     }
     if (msg->header.cmd == END_DETECTION)
     {
@@ -215,7 +216,7 @@ MorseLetter *Encoder_DecodeLetter(char letter)
 void Encoder_PlayWord(MorseWord *morse_word)
 {
     // send a word sequence
-    if ((morse_word->morse_letter[letter_index]->value != WORD_END) & !end_of_word)
+    if ((morse_word->morse_letter[letter_index]->value != WORD_END) && !end_of_word)
     {
         Encoder_PlayLetter(morse_word->morse_letter[letter_index]);
 
@@ -241,7 +242,7 @@ void Encoder_PlayWord(MorseWord *morse_word)
 void Encoder_PlayLetter(MorseLetter *letter)
 {
     // for each element in a letter
-    if ((letter->morse_element[element_index].value != LETTER_END) & !end_of_letter)
+    if ((letter->morse_element[element_index].value != LETTER_END) && !end_of_letter)
     {
         if (Luos_GetSystick() - morse_start_timeout > morse_period)
         {
