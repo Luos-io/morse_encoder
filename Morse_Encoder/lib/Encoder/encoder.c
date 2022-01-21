@@ -125,13 +125,14 @@ void Encoder_MsgHandler(service_t *service, msg_t *msg)
     }
     if (msg->header.cmd == END_DETECTION)
     {
-        uint16_t serial_id      = RoutingTB_IDFromType(SERIAL_TYPE);
+        search_result_t result;
+        RTFilter_Type(RTFilter_Reset(&result), SERIAL_TYPE);
         time_luos_t update_time = 0.01;
-        if (serial_id > 0)
+        if (result.result_table[0]->id > 0)
         {
             serial_detected = true;
             msg_t update_msg;
-            update_msg.header.target      = serial_id;
+            update_msg.header.target      = result.result_table[0]->id;
             update_msg.header.target_mode = IDACK;
             TimeOD_TimeToMsg(&update_time, &update_msg);
             update_msg.header.cmd = UPDATE_PUB;
