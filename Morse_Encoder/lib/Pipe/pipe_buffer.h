@@ -1,37 +1,35 @@
 /******************************************************************************
- * @file serial_com
- * @brief serial communication driver
+ * @file pipe_com
+ * @brief communication driver
  * @author Luos
  * @version 0.0.0
  ******************************************************************************/
-#ifndef SERIAL_COM_H
-#define SERIAL_COM_H
+#ifndef PIPE_BUFFER_H
+#define PIPE_BUFFER_H
 
-#include "stm32f0xx_hal.h"
-#include "stm32f0xx_ll_usart.h"
-#include "stm32f0xx_ll_gpio.h"
-
+#include <stdint.h>
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-#define SERIAL_RX_CLK() __HAL_RCC_GPIOA_CLK_ENABLE()
-#define SERIAL_RX_PIN   GPIO_PIN_3
-#define SERIAL_RX_PORT  GPIOA
-#define SERIAL_RX_AF    GPIO_AF1_USART2
-
-#define SERIAL_COM_CLOCK_ENABLE() __HAL_RCC_USART2_CLK_ENABLE()
-#define SERIAL_COM                USART2
-#define SERIAL_COM_IRQ            USART2_IRQn
-#define SERIAL_COM_IRQHANDLER()   USART2_IRQHandler()
+#ifndef PIPE_TO_LUOS_BUFFER_SIZE
+#define PIPE_TO_LUOS_BUFFER_SIZE 1024
+#endif
+#ifndef LUOS_TO_PIPE_BUFFER_SIZE
+#define LUOS_TO_PIPE_BUFFER_SIZE 2048
+#endif
 /*******************************************************************************
  * Variables
  ******************************************************************************/
 
 /*******************************************************************************
- * Functions
+ * Function
  ******************************************************************************/
-void SerialCom_Init(void);
-uint8_t SerialCom_GetBufferSize(void);
-uint8_t *SerialCom_GetBufferData(void);
+void PipeBuffer_Init(void);
+uint8_t *PipeBuffer_GetP2LBuffer(void);
+uint8_t PipeBuffer_GetP2LTask(uint8_t **data, uint16_t *size);
+void PipeBuffer_AllocP2LTask(uint16_t PositionLastData, uint8_t overflow);
 
-#endif /* SERIAL_COM_H */
+uint8_t *PipeBuffer_GetL2PBuffer(void);
+void PipeBuffer_PutL2PBuffer(uint8_t *data, uint16_t size);
+
+#endif /* PIPE_BUFFER_H */

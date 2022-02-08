@@ -1,14 +1,13 @@
 /******************************************************************************
- * @file Serial
- * @brief driver example of serial communication
+ * @file pipe
+ * @brief driver example a simple pipe
  * @author Luos
  * @version 0.0.0
  ******************************************************************************/
-#ifndef SERIAL_H
-#define SERIAL_H
+#ifndef PIPE_H
+#define PIPE_H
 
 #include "luos.h"
-
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
@@ -20,7 +19,7 @@
 /*******************************************************************************
  * Function
  ******************************************************************************/
-void Serial_Init(void);
-void Serial_Loop(void);
+void Pipe_Init(void);
+void Pipe_Loop(void);
 
-#endif /* SERIAL_H */
+#endif /* PIPE_H */
