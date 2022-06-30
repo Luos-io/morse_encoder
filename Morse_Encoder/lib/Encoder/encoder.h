@@ -7,7 +7,7 @@
 #ifndef ENCODER_H
 #define ENCODER_H
 
-#include "luos.h"
+#include "luos_engine.h"
 #include "stdbool.h"
 
 /*******************************************************************************
@@ -17,8 +17,8 @@
 
 typedef enum WordLength
 {
-    SHORT      = SHORT_PERIOD,
-    LONG       = 3 * SHORT_PERIOD,
+    SHORT = SHORT_PERIOD,
+    LONG = 3 * SHORT_PERIOD,
     WORD_SPACE = 7 * SHORT_PERIOD,
 } WordLength;
 

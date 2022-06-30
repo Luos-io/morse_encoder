@@ -36,15 +36,16 @@ int main(void)
     // Init
     Luos_Init();
     Led_Init();
-    Encoder_Init();
     Pipe_Init();
+    Encoder_Init();
+
     while (1)
     {
         // Loop
         Luos_Loop();
         Led_Loop();
-        Encoder_Loop();
         Pipe_Loop();
+        Encoder_Loop();
     }
 }
 /******************************************************************************
