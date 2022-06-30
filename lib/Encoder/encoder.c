@@ -42,7 +42,7 @@ bool end_of_word = false;
 bool end_of_letter = true;
 
 bool serial_detected = false;
-uint8_t id_state = 0;
+uint8_t output_id = 0;
 /*******************************************************************************
  * Function
  ******************************************************************************/
@@ -124,7 +124,7 @@ void Encoder_MsgHandler(service_t *service, msg_t *msg)
     {
         search_result_t result;
         RTFilter_Type(RTFilter_Reset(&result), STATE_TYPE);
-        id_state = result.result_table[0]->id;
+        output_id = result.result_table[0]->id;
         RTFilter_Type(RTFilter_Reset(&result), PIPE_TYPE);
         if (result.result_nbr > 0)
         {
@@ -272,10 +272,10 @@ void Encoder_PlayLetter(MorseLetter *letter)
 void Encoder_SendMorse(bool state)
 {
     // Now send a message
-    if (id_state > 0)
+    if (output_id > 0)
     {
         msg_t led_msg;
-        led_msg.header.target = id_state;
+        led_msg.header.target = output_id;
         led_msg.header.cmd = IO_STATE;
         led_msg.header.target_mode = IDACK;
         led_msg.header.size = sizeof(char);
